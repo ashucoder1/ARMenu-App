@@ -1,13 +1,17 @@
 package com.xperiencelabs.armenu
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.Button
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -15,11 +19,15 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.google.ar.core.Config
 import com.xperiencelabs.armenu.ui.theme.ARMenuTheme
+import com.xperiencelabs.armenu.ui.theme.Brown
+import com.xperiencelabs.armenu.ui.theme.Purple
 import com.xperiencelabs.armenu.ui.theme.Translucent
 import io.github.sceneview.ar.ARScene
 import io.github.sceneview.ar.node.ArModelNode
@@ -27,8 +35,10 @@ import io.github.sceneview.ar.node.ArNode
 import io.github.sceneview.ar.node.PlacementMode
 
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             ARMenuTheme {
                 // A surface container using the 'background' color from the theme
@@ -59,6 +69,7 @@ fun Menu(modifier: Modifier,onClick:(String)->Unit) {
     var currentIndex by remember {
         mutableStateOf(0)
     }
+    val context = LocalContext.current
 
     val itemsList = listOf(
         Food("burger",R.drawable.burger),
@@ -76,19 +87,47 @@ fun Menu(modifier: Modifier,onClick:(String)->Unit) {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceAround
     ) {
-        IconButton(onClick = {
-            updateIndex(-1)
-        }) {
-            Icon(painter = painterResource(id = R.drawable.baseline_arrow_back_ios_24), contentDescription ="previous" )
+        Card(modifier = Modifier
+            .fillMaxWidth()
+            .border(
+                width = 2.dp, // Adjust the border width as needed
+                color = Color(0xFF8B4513) // Dark brown color
+            ),
+            backgroundColor = Brown,
+            ){
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Row(modifier = Modifier.padding(8.dp)
+                    ,horizontalArrangement = Arrangement.SpaceAround,
+                    verticalAlignment = Alignment.CenterVertically) {
+                    IconButton(onClick = {
+                        updateIndex(-1)
+                    }) {
+                        Icon(painter = painterResource(id = R.drawable.baseline_arrow_back_ios_24), contentDescription ="previous" )
+                    }
+
+                    CircularImage(imageId = itemsList[currentIndex].imageId )
+
+                    IconButton(onClick = {
+                        updateIndex(1)
+                    }) {
+                        Icon(painter = painterResource(id = R.drawable.baseline_arrow_forward_ios_24), contentDescription ="next")
+                    }
+                }
+                Button(onClick = {
+                    val intent=Intent(context,MainActivity2::class.java)
+                    intent.putExtra("itemName", itemsList[currentIndex].name)
+                    context.startActivity(intent)
+                },
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .background(Color(0xFFD2B48C), shape = RoundedCornerShape(4.dp))) {
+                    Text(text = "Place Order", color = Color.White,
+                        style = MaterialTheme.typography.button)
+                }
+            }
+
         }
 
-        CircularImage(imageId = itemsList[currentIndex].imageId )
-
-        IconButton(onClick = {
-            updateIndex(1)
-        }) {
-            Icon(painter = painterResource(id = R.drawable.baseline_arrow_forward_ios_24), contentDescription ="next")
-        }
     }
 
 }
@@ -96,12 +135,12 @@ fun Menu(modifier: Modifier,onClick:(String)->Unit) {
 @Composable
 fun CircularImage(
     modifier: Modifier=Modifier,
-    imageId: Int
+    imageId: Int,
 ) {
     Box(modifier = modifier
         .size(140.dp)
         .clip(CircleShape)
-        .border(width = 3.dp, Translucent, CircleShape)
+        .border(width = 4.dp, Color.Yellow, CircleShape)
     ){
         Image(painter = painterResource(id = imageId), contentDescription = null, modifier = Modifier.size(140.dp), contentScale = ContentScale.FillBounds)
     }
