@@ -24,9 +24,11 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.google.ar.core.Config
 import com.xperiencelabs.armenu.ui.theme.ARMenuTheme
 import com.xperiencelabs.armenu.ui.theme.Brown
+import com.xperiencelabs.armenu.ui.theme.PinkBackground
 import com.xperiencelabs.armenu.ui.theme.Purple
 import com.xperiencelabs.armenu.ui.theme.Translucent
 import io.github.sceneview.ar.ARScene
@@ -85,13 +87,13 @@ fun Menu(modifier: Modifier,onClick:(String)->Unit) {
     }
     Row(modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceAround
+        horizontalArrangement = Arrangement.SpaceEvenly
     ) {
         Card(modifier = Modifier
             .fillMaxWidth()
             .border(
                 width = 2.dp, // Adjust the border width as needed
-                color = Color(0xFF8B4513) // Dark brown color
+                color = Color(0xFFB85F20) // Dark brown color
             ),
             backgroundColor = Brown,
             ){
@@ -113,14 +115,20 @@ fun Menu(modifier: Modifier,onClick:(String)->Unit) {
                         Icon(painter = painterResource(id = R.drawable.baseline_arrow_forward_ios_24), contentDescription ="next")
                     }
                 }
+                Text(text = itemsList[currentIndex].name,
+                    modifier=Modifier.padding(0.dp,4.dp,0.dp,0.dp),
+                    color = Color.White,
+                    fontSize = 20.sp
+                    )
                 Button(onClick = {
                     val intent=Intent(context,MainActivity2::class.java)
                     intent.putExtra("itemName", itemsList[currentIndex].name)
                     context.startActivity(intent)
                 },
                     modifier = Modifier
-                        .padding(16.dp)
-                        .background(Color(0xFFD2B48C), shape = RoundedCornerShape(4.dp))) {
+                        .padding(8.dp),
+                    colors = ButtonDefaults.buttonColors(PinkBackground),
+                    shape = RoundedCornerShape(16.dp)) {
                     Text(text = "Place Order", color = Color.White,
                         style = MaterialTheme.typography.button)
                 }
@@ -189,7 +197,8 @@ fun ARScreen(model:String) {
         if(placeModelButton.value){
             Button(onClick = {
                 modelNode.value?.anchor()
-            }, modifier = Modifier.align(Alignment.Center)) {
+            }, modifier = Modifier.align(Alignment.Center),
+                colors = ButtonDefaults.buttonColors(PinkBackground)) {
                 Text(text = "Place It")
             }
         }

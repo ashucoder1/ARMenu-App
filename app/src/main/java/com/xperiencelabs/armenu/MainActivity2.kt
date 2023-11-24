@@ -38,8 +38,19 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import android.Manifest
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Card
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import com.xperiencelabs.armenu.ui.theme.Brown
+import com.xperiencelabs.armenu.ui.theme.PinkBackground
+import com.xperiencelabs.armenu.ui.theme.Purple
+import com.xperiencelabs.armenu.ui.theme.Yellow
 
 
 private const val SEND_SMS_PERMISSION_REQUEST_CODE = 1
@@ -48,9 +59,14 @@ class MainActivity2 : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent{
-            ARMenuTheme {
-                    OrderScreen(context = LocalContext.current)
+            ARMenuTheme() {
+                    Surface(modifier = Modifier.fillMaxSize(), color = PinkBackground) {
+                        Column(verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally) {
+                            OrderScreen(context = LocalContext.current)
+                        }
                 }
+            }
             }
         }
     }
@@ -72,6 +88,7 @@ fun OrderScreen(context: Context){
     if (receivedItemName != null) {
         food = receivedItemName
     }
+
     val context = LocalContext.current
 
 
@@ -89,99 +106,127 @@ fun OrderScreen(context: Context){
             SEND_SMS_PERMISSION_REQUEST_CODE
         )
     }
-
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colors.background
-    ) {
-        Column(
+        Card(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(18.dp, 50.dp)
+                .fillMaxWidth()
+                .padding(16.dp)
+                .clip(RoundedCornerShape(16.dp)),
+            elevation = 18.dp
         ) {
-
-            Text(text = food+" \uD83E\uDD24",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp),
-                    style = MaterialTheme.typography.body1.copy(fontSize = 40.sp),
-                fontWeight = FontWeight.Bold)
-
-            // Name TextField
-            OutlinedTextField(
-                value = name,
-                onValueChange = { name = it },
-                label = { Text("Name") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
-            )
-
-            // Table Number TextField
-            OutlinedTextField(
-                value = tableNumber,
-                onValueChange = { tableNumber = it },
-                label = { Text("Table Number") },
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.Number
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
-            )
-
-            // Size Dropdown
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
-            ) {
-                Text(
-                    text = "Size: $selectedSize",
-                    modifier = Modifier
-                        .background(Color.LightGray)
-                        .padding(16.dp)
-                        .clickable {
-                            isDropdownVisible = !isDropdownVisible
-                        }
+            Box(modifier = Modifier
+                .background(
+                    brush = GradiendBrush(isverticalGradient = true, colors = listOf( Brown, Purple, Yellow))
                 )
-                DropdownMenu(
-                    expanded = isDropdownVisible,
-                    onDismissRequest = { isDropdownVisible = false },
+            ) {
+                Column(
                     modifier = Modifier
-                        .background(Color.White)
+                        .padding(18.dp, 18.dp)
                 ) {
-                    sizeOptions.forEach { size ->
-                        DropdownMenuItem(onClick = {
-                            selectedSize = size
-                            isDropdownVisible = false
-                        }) {
-                            Text(text = size)
+
+                    Text(
+                        text = food.substring(0, 1).uppercase()+food.substring(1) +" \uD83E\uDD24",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp),
+                        style = MaterialTheme.typography.body1.copy(fontSize = 40.sp),
+                        fontWeight = FontWeight.Bold
+                    )
+
+                    // Name TextField
+                    OutlinedTextField(
+                        value = name,
+                        onValueChange = { name = it },
+                        label = { Text("Name") },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp)
+                    )
+
+                    // Table Number TextField
+                    OutlinedTextField(
+                        value = tableNumber,
+                        onValueChange = { tableNumber = it },
+                        label = { Text("Table Number") },
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            keyboardType = KeyboardType.Number
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp)
+                    )
+
+                    // Size Dropdown
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp)
+                    ) {
+                        Text(
+                            text = "Size: $selectedSize",
+                            modifier = Modifier
+                                .background(Color.LightGray)
+                                .padding(16.dp)
+                                .clickable {
+                                    isDropdownVisible = !isDropdownVisible
+                                }
+                        )
+                        DropdownMenu(
+                            expanded = isDropdownVisible,
+                            onDismissRequest = { isDropdownVisible = false },
+                            modifier = Modifier
+                                .background(Color.White)
+                        ) {
+                            sizeOptions.forEach { size ->
+                                DropdownMenuItem(onClick = {
+                                    selectedSize = size
+                                    isDropdownVisible = false
+                                }) {
+                                    Text(text = size)
+                                }
+                            }
                         }
+                    }
+                    // Confirm Order Button
+                    Button(
+                        onClick = {
+                            sendOrderConfirmationSms(food,name,tableNumber,selectedSize,context)
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 16.dp),
+                        colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFDA7E6D))
+                    ) {
+                        Text(text = "Confirm Order", color = Color.White)
                     }
                 }
             }
-            // Confirm Order Button
-            Button(
-                onClick = {
-                    sendOrderConfirmationSms(food,name,tableNumber,selectedSize,context)
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 16.dp),
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFD2B48C))
-            ) {
-                Text(text = "Confirm Order", color = Color.White)
-            }
         }
-    }
 
     }
 
-@Preview(showBackground = true)
+@Preview()
 @Composable
 fun OrderScreenPreview(){
     OrderScreen(context = LocalContext.current)
+}
+
+@Composable
+private fun GradiendBrush(
+    isverticalGradient:Boolean,
+    colors:List<Color>
+): Brush {
+    val endoffset=if (isverticalGradient){
+        Offset(0f,Float.POSITIVE_INFINITY)
+    }
+    else{
+        Offset(Float.POSITIVE_INFINITY,0f)
+    }
+
+    return Brush.linearGradient(
+        colors=colors,
+        start= Offset.Zero,
+        end=endoffset
+    )
 }
 
 private fun sendOrderConfirmationSms(food:String,name: String, tableNumber: String, size: String, context: Context) {
@@ -197,5 +242,6 @@ private fun sendOrderConfirmationSms(food:String,name: String, tableNumber: Stri
         e.printStackTrace()
     }
 }
+
 
 
