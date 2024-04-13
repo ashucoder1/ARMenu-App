@@ -24,6 +24,9 @@
             android:name=".MainActivity2"
             android:exported="false" />
         <activity
+            android:name=".MLPredictorScreen"
+            android:exported="false" />
+        <activity
             android:name=".SplashActivity"
             android:exported="true"
             android:label="@string/app_name"

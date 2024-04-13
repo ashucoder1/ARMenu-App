@@ -59,6 +59,8 @@ fun Home_Screen() {
                         }
                         Spacer(modifier = Modifier.height(16.dp))
                         CardOption("ML Screen") {
+                              val intent = Intent(context, MLPredictorScreen::class.java)
+                              context.startActivity(intent)
                               // Start ML screen activity or do whatever you want
                         }
                   }
