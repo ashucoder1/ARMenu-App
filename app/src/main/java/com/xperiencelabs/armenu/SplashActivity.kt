@@ -54,7 +54,7 @@ class SplashActivity:ComponentActivity(){
             ),
             contentAlignment = Alignment.Center ){
             Image(modifier=Modifier.alpha(alpha.value),
-                painter = painterResource(id = R.drawable.logo), contentDescription =null )
+                painter = painterResource(id = R.drawable.logo2), contentDescription =null )
         }
     }
 }
