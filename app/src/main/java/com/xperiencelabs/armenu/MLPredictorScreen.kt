@@ -5,48 +5,55 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import android.graphics.Bitmap
+import android.graphics.drawable.shapes.Shape
 import android.provider.MediaStore
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts.GetContent
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
+import androidx.compose.material.ButtonColors
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.google.ai.client.generativeai.GenerativeModel
 import com.google.ai.client.generativeai.type.content
+import com.xperiencelabs.armenu.ui.theme.LightBrown
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-
-var output: String =""
+import kotlinx.coroutines.withContext
 
 
 class MLPredictorScreen() : ComponentActivity() {
 
-      var output: String =""
-
-
       override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
-
             setContent {
                   UploadImageScreen()
             }
       }
 }
 
-
 @Composable
 fun UploadImageScreen() {
       var selectedImageBitmap by remember { mutableStateOf<Bitmap?>(null) }
+      var outputText by remember { mutableStateOf("") }
+
 
       Column(
             modifier = Modifier
@@ -59,12 +66,15 @@ fun UploadImageScreen() {
                   Image(
                         bitmap = selectedImageBitmap!!.asImageBitmap(),
                         contentDescription = null,
-                        modifier = Modifier.size(200.dp)
+                        modifier = Modifier.size(200.dp).clip(RoundedCornerShape(12.dp))
                   )
                   Spacer(modifier = Modifier.height(16.dp))
-                  UploadButton(selectedImageBitmap!!)
+                  UploadButton(selectedImageBitmap!!, onUploadComplete = { output ->
+                        outputText = output
+                  })
+
                   Spacer(modifier = Modifier.height(16.dp))
-                  Text(text ="Hello bhai aur kya hal chal" )
+                  Text(text = outputText,modifier=Modifier, fontSize = 16.sp ) // Display the output text
             } else {
                   PickImageButton(onImagePicked = { bitmap ->
                         selectedImageBitmap = bitmap
@@ -88,58 +98,64 @@ fun PickImageButton(onImagePicked: (Bitmap) -> Unit) {
       }
 }
 
-
 @Composable
-fun UploadButton(bitmap: Bitmap) {
+fun UploadButton(bitmap: Bitmap, onUploadComplete: (String) -> Unit) {
+      var isLoading by remember {
+            mutableStateOf(false)
+      }
       Button(
             onClick = {
+                  isLoading=true
                   // Launch a coroutine to perform the upload operation
                   GlobalScope.launch(Dispatchers.IO) {
-                        uploadImage(bitmap)
+                        val output = uploadImage(bitmap)
+                        withContext(Dispatchers.Main) {
+                              isLoading = false // Set loading state to false when upload is complete
+                              onUploadComplete(output) // Call the lambda when upload is complete
+                        }
                   }
             },
             modifier = Modifier
                   .fillMaxWidth()
                   .padding(vertical = 16.dp)
+                  , colors = ButtonDefaults.buttonColors(backgroundColor = Color.White), border = BorderStroke(1.dp, color = LightBrown)
+
       ) {
             Text("Upload Image")
       }
+      if(isLoading){
+            LinearProgressIndicator(
+                  modifier = Modifier.fillMaxWidth(), // Take up full width
+                  color = Color.Blue // Customize color if needed
+            )
+      }
 }
 
-private suspend fun uploadImage(bitmap: Bitmap) {
-      // Perform the upload operation here, for example, using a network call
-      // For demonstration purposes, we'll simply print a message
+
+private suspend fun uploadImage(bitmap: Bitmap): String {
       println("Uploading image...")
       val generativeModel = GenerativeModel(
-            // Use a model that's applicable for your use case (see "Implement basic use cases" below)
             modelName = "gemini-pro-vision",
-            // Access your API key as a Build Configuration variable (see "Set up your API key" above)
-            apiKey = "AIzaSyDx-iWa5DukvIjFSz4PLyfIvn9_uvEcqLM"
+            apiKey = "AIzaSyAZejiOsMruK5W_rkGHch_e-cKD1BFa3mc"
       )
 
       val image1: Bitmap = bitmap
 
-
       val inputContent = content {
             image(image1)
 
-            text("You are an expert in nutritionist where you need to see the food items from the image " +
-                "and calculate the total calories, fat content and protien content , carbohydrates content, " +
-                "vitamin content, also provide the details of every food items with calories intake" +
-                "  is below format" +
-                "               1. Item 1 - no of calories, fat content, protien content, carbohydrates content, vitamin content, " +
-                "               2. Item 2 - no of calories, fat content, protien content, carbohydrates content, vitamin content, "
-                )
+            text(
+                  "You are an expert in nutritionist where you need to see the food items from the image " +
+                      "and calculate the total calories, fat content and protien content , carbohydrates content, " +
+                      "vitamin content, also provide the details of every food items with calories intake" +
+                      "  is below format" +
+                      "               1. Item 1 - no of calories, fat content, protien content, carbohydrates content, vitamin content, " +
+                      "               2. Item 2 - no of calories, fat content, protien content, carbohydrates content, vitamin content, "
+            )
       }
 
       val response = generativeModel.generateContent(inputContent)
-      print(response.text)
-      //Log.println(TAG response)
-      Log.d(TAG, "${response.text}")
-      output= response.text.toString()
-
-      // Simulate a delay to mimic network request
-
-
+      val output = response.text
       println("Image uploaded successfully!")
+      return output.toString() // Return the output string
 }
