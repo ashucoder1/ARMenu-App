@@ -1,10 +1,10 @@
 package com.xperiencelabs.armenu
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
 import androidx.compose.runtime.Composable
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -14,9 +14,10 @@ import androidx.compose.material.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat.startActivity
 import com.xperiencelabs.armenu.ui.theme.ARMenuTheme
 
 
@@ -36,22 +37,31 @@ class HomeScreen : ComponentActivity() {
 @Composable
 fun Home_Screen() {
       val context= LocalContext.current
-      Column(
-            modifier = Modifier
-                  .fillMaxSize()
-                  .padding(16.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-      ) {
-            CardOption("AR Screen") {
-                 val intent = Intent(context,MainActivity::class.java)
-                  context.startActivity(intent)
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-            CardOption("ML Screen") {
-//                  val intent = Intent(context, MainActivity2::class.java)
-//                  context.startActivity(intent)
-            }
+      Box(modifier = Modifier.fillMaxSize()) {
+            // Load image from resources and set it as background
+            Image(
+                  painterResource(id = R.drawable.background),
+                  contentDescription = null,
+                  modifier = Modifier.fillMaxSize(),
+                  contentScale = ContentScale.FillBounds
+            )
+                  // Column with cards
+                  Column(
+                        modifier = Modifier
+                              .fillMaxSize()
+                              .padding(16.dp),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                  ) {
+                        CardOption("AR Screen") {
+                              val intent = Intent(context, MainActivity::class.java)
+                              context.startActivity(intent)
+                        }
+                        Spacer(modifier = Modifier.height(16.dp))
+                        CardOption("ML Screen") {
+                              // Start ML screen activity or do whatever you want
+                        }
+                  }
       }
 }
 
