@@ -76,11 +76,11 @@ fun Menu(modifier: Modifier,onClick:(String)->Unit) {
     val context = LocalContext.current
 
     val itemsList = listOf(
-        Food("Burger",R.drawable.burger),
-        Food("Instant",R.drawable.instant),
-        Food("Momos",R.drawable.momos),
-        Food("Pizza",R.drawable.pizza),
-        Food("Ramen",R.drawable.ramen),
+        Food("burger",R.drawable.burger),
+        Food("instant",R.drawable.instant),
+        Food("momos",R.drawable.momos),
+        Food("pizza",R.drawable.pizza),
+        Food("ramen",R.drawable.ramen),
 
     )
     fun updateIndex(offset:Int){

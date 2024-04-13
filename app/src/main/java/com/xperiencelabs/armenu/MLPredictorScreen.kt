@@ -149,7 +149,7 @@ private suspend fun uploadImage(bitmap: Bitmap): String {
       println("Uploading image...")
       val generativeModel = GenerativeModel(
             modelName = "gemini-pro-vision",
-            apiKey = "AIzaSyAZejiOsMruK5W_rkGHch_e-cKD1BFa3mc"
+            apiKey = "AIzaSyA4UYVM5b5L4QG0TIxJZd93CjOdK8Ki-uo"
       )
 
       val image1: Bitmap = bitmap

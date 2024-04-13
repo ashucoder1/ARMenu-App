@@ -9,15 +9,21 @@ import androidx.compose.foundation.Image
 import androidx.compose.runtime.Composable
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
+import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -56,25 +62,35 @@ fun Home_Screen() {
                   modifier = Modifier.fillMaxSize(),
                   contentScale = ContentScale.FillBounds
             )
-                  TextWithShadow(value = "Welcome ")
+                  TextWithShadow(value = " NutriFit ")
                   // Column with cards
                   Column(
                         modifier = Modifier
                               .fillMaxSize()
-                              .padding(16.dp),
-                        verticalArrangement = Arrangement.Center,
+                              .padding(bottom = 200.dp),
+                        verticalArrangement = Arrangement.Bottom,
                         horizontalAlignment = Alignment.CenterHorizontally
                   ) {
-                        CardOption("AR Screen",R.drawable.ar) {
-                              val intent = Intent(context, MainActivity::class.java)
-                              context.startActivity(intent)
+                        Card(shape = RoundedCornerShape(8.dp),
+                              backgroundColor = Color.White,
+                              border = BorderStroke(2.dp, Brown),
+                              modifier = Modifier
+                                    .padding(12.dp)
+                                    .alpha(0.8f)) {
+                              Column {
+                                    CardOption("AR Screen",R.drawable.ar) {
+                                          val intent = Intent(context, MainActivity::class.java)
+                                          context.startActivity(intent)
+                                    }
+                                    Spacer(modifier = Modifier.height(16.dp))
+                                    CardOption("ML Screen",R.drawable.chatbot) {
+                                          val intent = Intent(context, MLPredictorScreen::class.java)
+                                          context.startActivity(intent)
+                                          // Start ML screen activity or do whatever you want
+                                    }
+                              }
                         }
-                        Spacer(modifier = Modifier.height(16.dp))
-                        CardOption("ML Screen",R.drawable.chatbot) {
-                              val intent = Intent(context, MLPredictorScreen::class.java)
-                              context.startActivity(intent)
-                              // Start ML screen activity or do whatever you want
-                        }
+
                   }
       }
 }
@@ -109,29 +125,44 @@ fun CardOption(title: String,resource_id:Int, onClick: () -> Unit) {
                         modifier = Modifier
                               .padding(8.dp)
                               .weight(1f)
-                              .fillMaxWidth()
-                              .padding(vertical = 8.dp),
+                              .fillMaxWidth(),
                         textAlign = TextAlign.Center
                   )
-            }
+                  //arrow
+                  Spacer(modifier = Modifier.width(8.dp))
+                  Icon(painter = painterResource(id = R.drawable.baseline_arrow_forward_ios_24), contentDescription =null )
+                  }
       }
 }
 @Composable
-fun TextWithShadow(value:String){
-      val shadowoffset= Offset(x=1f,y=2f)
-      Text(
-            text = value,
-            style = TextStyle(
-                  fontSize = 46.sp,
-                  fontWeight = FontWeight.Bold,
-                  color = Brown, // Brown color
-                  textDecoration = TextDecoration.Underline,
-                  shadow = Shadow(color = Color.Gray, offset = shadowoffset, blurRadius = 2f)
-            ),
-            modifier = Modifier
-                  .fillMaxWidth()
-                  .padding(top = 200.dp),
-            textAlign = TextAlign.Center
+fun TextWithShadow(value: String) {
+      val shadowOffset = Offset(x = 1f, y = 2f)
+      Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+      ) {
+            Spacer(modifier = Modifier.height(172.dp))
+            Image(
+                  painter = painterResource(id = R.drawable.nutrifit), // Replace R.drawable.logo with your image resource
+                  contentDescription = null,
+                  modifier = Modifier
+                        .clip(CircleShape)
+                        .size(200.dp)
 
-      )
+            )
+//            Text(
+//                  text = value,
+//                  style = TextStyle(
+//                        fontSize = 46.sp,
+//                        fontWeight = FontWeight.Bold,
+//                        color = Brown, // Brown color
+//                        textDecoration = TextDecoration.Underline,
+//                        shadow = Shadow(color = Color.Gray, offset = shadowOffset, blurRadius = 2f)
+//                  ),
+//                  modifier = Modifier
+//                        .fillMaxWidth()
+//                        .padding(top = 16.dp),
+//                  textAlign = TextAlign.Center
+//            )
+      }
 }
