@@ -12,4 +12,11 @@ val Purple= Color(0x9E827ddc)
 val Yellow= Color(0x9Effe65a)
 val Brown= Color(0x9EF07E51)
 val PinkBackground= Color(0x9Ee9b7e2)
+val DarkBrown= Color(0x9E96340D)
+val Cream= Color(0x9EF1BFAB)
+val LightBrown= Color(0x9EF37847)
+
+
+
+
 
