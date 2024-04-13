@@ -38,16 +38,22 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import android.Manifest
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.xperiencelabs.armenu.ui.theme.Brown
+import com.xperiencelabs.armenu.ui.theme.Cream
 import com.xperiencelabs.armenu.ui.theme.PinkBackground
 import com.xperiencelabs.armenu.ui.theme.Purple
 import com.xperiencelabs.armenu.ui.theme.Yellow
@@ -60,7 +66,7 @@ class MainActivity2 : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent{
             ARMenuTheme() {
-                    Surface(modifier = Modifier.fillMaxSize(), color = PinkBackground) {
+                    Surface(modifier = Modifier.fillMaxSize()) {
                         Column(verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally) {
                             OrderScreen(context = LocalContext.current)
@@ -106,17 +112,29 @@ fun OrderScreen(context: Context){
             SEND_SMS_PERMISSION_REQUEST_CODE
         )
     }
+
+    Box(modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+
+
+        Image(
+            painterResource(id = R.drawable.background),
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.FillBounds
+        )
+
         Card(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
-                .clip(RoundedCornerShape(16.dp)),
+                .clip(RoundedCornerShape(16.dp))
+                .shadow(8.dp),
+            border = BorderStroke(1.dp, Brown),
             elevation = 18.dp
         ) {
-            Box(modifier = Modifier
-                .background(
-                    brush = GradiendBrush(isverticalGradient = true, colors = listOf( Brown, Purple, Yellow))
-                )
+            Box(
             ) {
                 Column(
                     modifier = Modifier
@@ -124,7 +142,8 @@ fun OrderScreen(context: Context){
                 ) {
 
                     Text(
-                        text = food.substring(0, 1).uppercase()+food.substring(1) +" \uD83E\uDD24",
+                        text = "Order: "+food.substring(0, 1)
+                            .uppercase() + food.substring(1) ,
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 8.dp),
@@ -136,7 +155,7 @@ fun OrderScreen(context: Context){
                     OutlinedTextField(
                         value = name,
                         onValueChange = { name = it },
-                        label = { Text("Name") },
+                        label = { Text(" Your Name") },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 8.dp)
@@ -146,7 +165,7 @@ fun OrderScreen(context: Context){
                     OutlinedTextField(
                         value = tableNumber,
                         onValueChange = { tableNumber = it },
-                        label = { Text("Table Number") },
+                        label = { Text("Table Number / Address") },
                         keyboardOptions = KeyboardOptions.Default.copy(
                             keyboardType = KeyboardType.Number
                         ),
@@ -164,7 +183,7 @@ fun OrderScreen(context: Context){
                         Text(
                             text = "Size: $selectedSize",
                             modifier = Modifier
-                                .background(Color.LightGray)
+                                .background(Cream)
                                 .padding(16.dp)
                                 .clickable {
                                     isDropdownVisible = !isDropdownVisible
@@ -189,7 +208,7 @@ fun OrderScreen(context: Context){
                     // Confirm Order Button
                     Button(
                         onClick = {
-                            sendOrderConfirmationSms(food,name,tableNumber,selectedSize,context)
+                            sendOrderConfirmationSms(food, name, tableNumber, selectedSize, context)
                         },
                         modifier = Modifier
                             .fillMaxWidth()
@@ -201,6 +220,7 @@ fun OrderScreen(context: Context){
                 }
             }
         }
+    }
 
     }
 
@@ -236,7 +256,7 @@ private fun sendOrderConfirmationSms(food:String,name: String, tableNumber: Stri
         val message = "Order confirmation:\n" +
                 "Name: $name\nItem: $food\nSize: $size\nTable No: $tableNumber"
         smsManager.sendTextMessage(phoneNumber, null, message, null, null)
-        Toast.makeText(context,"Order Placed",Toast.LENGTH_LONG).show()
+        Toast.makeText(context," Order Placed ",Toast.LENGTH_LONG).show()
     } catch (e: Exception) {
         Log.e("SMS_ERROR", "Error sending SMS: ${e.message}")
         e.printStackTrace()

@@ -128,6 +128,10 @@ fun TextWithShadow(value:String){
                   textDecoration = TextDecoration.Underline,
                   shadow = Shadow(color = Color.Gray, offset = shadowoffset, blurRadius = 2f)
             ),
-            modifier = Modifier.padding(8.dp, 47.dp)
+            modifier = Modifier
+                  .fillMaxWidth()
+                  .padding(top = 200.dp),
+            textAlign = TextAlign.Center
+
       )
 }

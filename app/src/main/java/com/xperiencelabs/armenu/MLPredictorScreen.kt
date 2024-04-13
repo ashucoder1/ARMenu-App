@@ -1,11 +1,9 @@
 package com.xperiencelabs.armenu
 
-import android.content.ContentValues.TAG
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import android.graphics.Bitmap
-import android.graphics.drawable.shapes.Shape
 import android.provider.MediaStore
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult

@@ -28,6 +28,8 @@ import androidx.compose.ui.unit.sp
 import com.google.ar.core.Config
 import com.xperiencelabs.armenu.ui.theme.ARMenuTheme
 import com.xperiencelabs.armenu.ui.theme.Brown
+import com.xperiencelabs.armenu.ui.theme.Cream
+import com.xperiencelabs.armenu.ui.theme.LightBrown
 import com.xperiencelabs.armenu.ui.theme.PinkBackground
 import com.xperiencelabs.armenu.ui.theme.Purple
 import com.xperiencelabs.armenu.ui.theme.Translucent
@@ -74,11 +76,11 @@ fun Menu(modifier: Modifier,onClick:(String)->Unit) {
     val context = LocalContext.current
 
     val itemsList = listOf(
-        Food("burger",R.drawable.burger),
-        Food("instant",R.drawable.instant),
-        Food("momos",R.drawable.momos),
-        Food("pizza",R.drawable.pizza),
-        Food("ramen",R.drawable.ramen),
+        Food("Burger",R.drawable.burger),
+        Food("Instant",R.drawable.instant),
+        Food("Momos",R.drawable.momos),
+        Food("Pizza",R.drawable.pizza),
+        Food("Ramen",R.drawable.ramen),
 
     )
     fun updateIndex(offset:Int){
@@ -95,7 +97,7 @@ fun Menu(modifier: Modifier,onClick:(String)->Unit) {
                 width = 2.dp, // Adjust the border width as needed
                 color = Color(0xFFB85F20) // Dark brown color
             ),
-            backgroundColor = Brown,
+            backgroundColor = Cream,
             ){
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Row(modifier = Modifier.padding(8.dp)
@@ -127,9 +129,9 @@ fun Menu(modifier: Modifier,onClick:(String)->Unit) {
                 },
                     modifier = Modifier
                         .padding(8.dp),
-                    colors = ButtonDefaults.buttonColors(PinkBackground),
-                    shape = RoundedCornerShape(16.dp)) {
-                    Text(text = "Place Order", color = Color.White,
+                    colors = ButtonDefaults.buttonColors(LightBrown),
+                    shape = RoundedCornerShape(8.dp)) {
+                    Text(text = "Place Order!", color = Color.White,
                         style = MaterialTheme.typography.button)
                 }
             }
@@ -148,7 +150,7 @@ fun CircularImage(
     Box(modifier = modifier
         .size(140.dp)
         .clip(CircleShape)
-        .border(width = 4.dp, Color.Yellow, CircleShape)
+        .border(width = 4.dp, Brown, CircleShape)
     ){
         Image(painter = painterResource(id = imageId), contentDescription = null, modifier = Modifier.size(140.dp), contentScale = ContentScale.FillBounds)
     }
