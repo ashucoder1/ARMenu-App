@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace 'com.xperiencelabs.armenu'
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.xperiencelabs.armenu"
@@ -64,4 +64,5 @@ dependencies {
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_ui_version"
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_ui_version"
     implementation 'io.github.sceneview:arsceneview:0.10.0'
+
 }
