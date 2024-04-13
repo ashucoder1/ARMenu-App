@@ -24,10 +24,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toBitmap
 import com.google.ai.client.generativeai.GenerativeModel
 import com.google.ai.client.generativeai.type.content
 import com.xperiencelabs.armenu.ui.theme.LightBrown
@@ -35,6 +38,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+
 
 
 class MLPredictorScreen() : ComponentActivity() {
@@ -49,6 +53,7 @@ class MLPredictorScreen() : ComponentActivity() {
 
 @Composable
 fun UploadImageScreen() {
+      var context = LocalContext.current
       var selectedImageBitmap by remember { mutableStateOf<Bitmap?>(null) }
       var outputText by remember { mutableStateOf("") }
 
@@ -62,9 +67,13 @@ fun UploadImageScreen() {
       ) {
             if (selectedImageBitmap != null) {
                   Image(
-                        bitmap = selectedImageBitmap!!.asImageBitmap(),
-                        contentDescription = null,
-                        modifier = Modifier.size(200.dp).clip(RoundedCornerShape(12.dp))
+                        //bitmap = selectedImageBitmap!!.asImageBitmap(),
+                        bitmap = selectedImageBitmap!!.asImageBitmap() ,
+                        contentDescription = "Image box",
+                        modifier = Modifier
+                              .size(200.dp)
+                              .clip(RoundedCornerShape(12.dp)),
+                        contentScale = ContentScale.Fit
                   )
                   Spacer(modifier = Modifier.height(16.dp))
                   UploadButton(selectedImageBitmap!!, onUploadComplete = { output ->
@@ -72,7 +81,11 @@ fun UploadImageScreen() {
                   })
 
                   Spacer(modifier = Modifier.height(16.dp))
-                  Text(text = outputText,modifier=Modifier, fontSize = 16.sp ) // Display the output text
+                  Text(
+                        text = outputText,
+                        modifier = Modifier,
+                        fontSize = 16.sp
+                  ) // Display the output text
             } else {
                   PickImageButton(onImagePicked = { bitmap ->
                         selectedImageBitmap = bitmap
@@ -103,25 +116,27 @@ fun UploadButton(bitmap: Bitmap, onUploadComplete: (String) -> Unit) {
       }
       Button(
             onClick = {
-                  isLoading=true
+                  isLoading = true
                   // Launch a coroutine to perform the upload operation
                   GlobalScope.launch(Dispatchers.IO) {
                         val output = uploadImage(bitmap)
                         withContext(Dispatchers.Main) {
-                              isLoading = false // Set loading state to false when upload is complete
+                              isLoading =
+                                    false // Set loading state to false when upload is complete
                               onUploadComplete(output) // Call the lambda when upload is complete
                         }
                   }
             },
             modifier = Modifier
                   .fillMaxWidth()
-                  .padding(vertical = 16.dp)
-                  , colors = ButtonDefaults.buttonColors(backgroundColor = Color.White), border = BorderStroke(1.dp, color = LightBrown)
+                  .padding(vertical = 16.dp),
+            colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
+            border = BorderStroke(1.dp, color = LightBrown)
 
       ) {
             Text("Upload Image")
       }
-      if(isLoading){
+      if (isLoading) {
             LinearProgressIndicator(
                   modifier = Modifier.fillMaxWidth(), // Take up full width
                   color = Color.Blue // Customize color if needed
@@ -141,6 +156,7 @@ private suspend fun uploadImage(bitmap: Bitmap): String {
 
       val inputContent = content {
             image(image1)
+            text("")
 
             text(
                   "You are an expert in nutritionist where you need to see the food items from the image " +
